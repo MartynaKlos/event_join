@@ -16,6 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+import events_app.views as events_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', events_views.Main.as_view(), name='main'),
+    path('events/', events_views.EventsListView.as_view(), name='events-list'),
+    path('events/<int:event_id>/', events_views.EventDetailsView.as_view(), name='events-details')
 ]
