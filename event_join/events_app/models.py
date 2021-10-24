@@ -15,4 +15,7 @@ class Event(models.Model):
     class Meta:
         ordering = ['start_date']
 
+    def __str__(self):
+        return self.title
+
 

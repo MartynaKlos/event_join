@@ -17,10 +17,14 @@ from django.contrib import admin
 from django.urls import path
 
 import events_app.views as events_views
+import participants_app.views as part_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', events_views.Main.as_view(), name='main'),
     path('events/', events_views.EventsListView.as_view(), name='events-list'),
-    path('events/<int:event_id>/', events_views.EventDetailsView.as_view(), name='events-details')
+    path('events/<int:event_id>/', events_views.EventDetailsView.as_view(), name='events-details'),
+    path('events/add-event/', events_views.AddEventView.as_view(), name='add-event'),
+    path('events/register/', part_views.RegisterView.as_view(), name='register'),
+    path('participant/<confirmation_uuid>/', part_views.ConfirmEmailView.as_view(), name='email-confirmed'),
 ]

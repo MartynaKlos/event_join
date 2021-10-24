@@ -17,6 +17,9 @@
         <h5>Limit:</h5>
         {{ event.limit }}
         <br><br>
-        <button type="button" class="btn btn-danger">Register</button>
+        <form>
+            <input name="event" type="hidden" value="{{ event.pk }}">
+            <button formaction="{% url 'register' %}" type="submit" class="btn btn-danger">Register</button>
+        </form>
     </div>
 {% endblock %}

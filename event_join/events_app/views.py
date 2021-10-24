@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.views import View
-from django.views.generic import ListView, DetailView
 from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import ListView, DetailView, FormView
 
 from .models import Event
+from .forms import AddEventForm
 
 
 class Main(View):
@@ -26,6 +27,19 @@ class EventDetailsView(DetailView):
     context_object_name = 'event'
     pk_url_kwarg = 'event_id'
     template_name = 'events_app/event_details.html'
+
+
+class AddEventView(FormView):
+    form_class = AddEventForm
+    template_name = 'events_app/add_event.html'
+    success_url = reverse_lazy('events-list')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+
 
 
 
