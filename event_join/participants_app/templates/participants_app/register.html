@@ -6,10 +6,15 @@
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
     crossorigin="anonymous">
     <div class="container">
+    {% if private %}
+        <center><h2>Sorry!</h2>
+        <p>This event is private...</p></center>
+    {% else %}
         <form method="post">
         {% csrf_token %}
         {{ form }}
         <button type="submit" class="btn btn-primary">Register</button>
         </form>
+    {% endif %}
     </div>
 {% endblock %}

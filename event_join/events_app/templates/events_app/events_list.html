@@ -29,10 +29,13 @@
                     </form>
                 </td>
                 <td>
+                    {% if event.available %}
                     <form>
-                        <input name="event" type="hidden" value="{{ event.pk }}">
-                        <button formaction="{% url 'register' %}" type="submit" class="btn btn-danger">Register</button>
+                        <button formaction="/events/register/{{ event.pk }}/" type="submit" class="btn btn-danger">Register</button>
                     </form>
+                    {% else %}
+                    Coming soon...
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

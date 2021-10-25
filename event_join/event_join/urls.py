@@ -25,6 +25,7 @@ urlpatterns = [
     path('events/', events_views.EventsListView.as_view(), name='events-list'),
     path('events/<int:event_id>/', events_views.EventDetailsView.as_view(), name='events-details'),
     path('events/add-event/', events_views.AddEventView.as_view(), name='add-event'),
-    path('events/register/', part_views.RegisterView.as_view(), name='register'),
+    path('events/register/<int:pk>/', part_views.RegisterView.as_view(), name='register'),
     path('participant/<confirmation_uuid>/', part_views.ConfirmEmailView.as_view(), name='email-confirmed'),
+    path('login/', events_views.LoginView.as_view(), name='login'),
 ]

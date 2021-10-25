@@ -14,12 +14,15 @@
         <h5>Date and time:</h5>
         {{ event.start_date }} - {{ event.end_date }}
         <br><br>
-        <h5>Limit:</h5>
-        {{ event.limit }}
+        <h5>Places left:</h5>
+        {{ places_left }} / {{ event.limit }}
         <br><br>
+        {% if event.available %}
         <form>
-            <input name="event" type="hidden" value="{{ event.pk }}">
-            <button formaction="{% url 'register' %}" type="submit" class="btn btn-danger">Register</button>
+            <button formaction="/events/register/{{ event.pk }}/" type="submit" class="btn btn-danger">Register</button>
         </form>
+        {% else %}
+        Registration starts on {{ event.registration_start }}
+        {% endif %}
     </div>
 {% endblock %}

@@ -20,3 +20,5 @@ class RegisterForm(forms.Form):
     #                                surname=surname,
     #                                email=email,
     #                                event=event)
+
+

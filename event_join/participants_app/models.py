@@ -1,6 +1,8 @@
 import uuid
 
 from django.db import models
+from django.urls import reverse
+from django.core.mail import send_mail
 
 from events_app.models import Event
 
@@ -15,3 +17,12 @@ class Participant(models.Model):
     is_confirmed = models.BooleanField(default=False)
     is_active = models.BooleanField(null=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+    # def send_email(self):
+    #     url = reverse('email-confirmed', kwargs={'confirmation_uuid': self.confirmation_id})
+    #     send_mail(
+    #         f'{self.name} - Confirm your email',
+    #         f'Please confirm your email - {url}',
+    #         'klosmartynaa@gmail.com',
+    #         [self.email],
+    #     )

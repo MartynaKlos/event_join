@@ -1,6 +1,10 @@
-from django.shortcuts import render
+import uuid
+
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import FormView
+from django.views.generic.detail import SingleObjectMixin
 from django.core.mail import send_mail
 
 from .forms import RegisterForm
@@ -8,29 +12,37 @@ from .models import Participant
 from events_app.models import Event
 
 
-# class RegisterView(FormView):
+# class RegisterView(SingleObjectMixin, FormView):
 #     form_class = RegisterForm
 #     template_name = 'participants_app/register.html'
 #     success_url = reverse_lazy('events-list')
+#     model = Event
 #
 #     def form_valid(self, form):
-#         send_mail(
-#             'Confirm your email',
-#             'Please confirm your email',
-#             'klosmartynaa@gmail.com',
-#             ['klos.martyna@wp.pl'],
-#         )
+#         participant = Participant.objects.create(**form.cleaned_data)
+#         participant.send_email()
 #         return super().form_valid(form)
+#
+#     def get(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         return super().get(request, *args, **kwargs)
+#
+#     def get_initial(self):
+#         dict = super().get_initial()
+#         dict['event'] = self.get_object().pk
+#         return dict
 
 
 class RegisterView(View):
     def get(self, request, *args, **kwargs):
-        event_pk = int(request.GET.get('event'))
-        event = Event.objects.get(pk=event_pk)
+        event_pk = kwargs['pk']
+        event = get_object_or_404(Event, pk=event_pk)
         register_form = RegisterForm(initial={'event': event})
         context = {
             'form': register_form
         }
+        if event.is_private:
+            context['private'] = 'private'
         return render(request, 'participants_app/register.html', context)
 
     def post(self, request, *args, **kwargs):
@@ -60,5 +72,6 @@ class ConfirmEmailView(View):
         participant = Participant.objects.get(confirmation_id=confirmation_id)
         participant.is_confirmed = True
         participant.save()
+        participant.confirmation_id = uuid.uuid1()
+        participant.save()
         return render(request, 'participants_app/email_confirmed.html')
-

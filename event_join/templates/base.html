@@ -33,9 +33,16 @@
                 <li>
                     <a class="nav-link" href="{% url 'events-list' %}">Events</a>
                 </li>
-                 <li>
-                    <a class="nav-link" href="#">Login</a>
+
+                {% if user.is_authenticated %}
+                <li>
+                   <a class="nav-link" href="#">Log out</a>
                 </li>
+                {% else %}
+                <li>
+                    <a class="nav-link" href="{% url 'login' %}">Log in</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </nav>
