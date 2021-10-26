@@ -136,5 +136,5 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 
-DOMAIN = 'localhost:8000'
-PROTOCOL = 'http'
+DOMAIN = 'https://127.0.0.1:8000/'
+

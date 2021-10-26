@@ -1,4 +1,5 @@
 import uuid
+from urllib.parse import urljoin
 
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
@@ -10,7 +11,7 @@ from django.core.mail import send_mail
 from .forms import RegisterForm
 from .models import Participant
 from events_app.models import Event
-
+from event_join.settings import DOMAIN
 
 # class RegisterView(SingleObjectMixin, FormView):
 #     form_class = RegisterForm
@@ -52,10 +53,9 @@ class RegisterView(View):
             surname = form.cleaned_data['surname']
             email = form.cleaned_data['email']
             event = form.cleaned_data['event']
-            Participant.objects.create(name=name, surname=surname, email=email, event=event)
-            confirmation_uuid = Participant.objects.get(email=email).confirmation_id
-            url = f'http://127.0.0.1:8000/participant/{confirmation_uuid}'
-
+            participant = Participant.objects.create(name=name, surname=surname, email=email, event=event)
+            confirmation_uuid = str(participant.confirmation_id)
+            url = urljoin(DOMAIN, confirmation_uuid)
             send_mail(
                 f'{name} - Confirm your email',
                 f'Please confirm your email - {url}',
@@ -64,6 +64,13 @@ class RegisterView(View):
             )
 
             return render(request, 'participants_app/form_submitted.html')
+        else:
+            event = Event.objects.get(pk=kwargs['pk'])
+            register_form = RegisterForm(initial={'event': event})
+            context = {
+                'form': register_form
+            }
+            return render(request, 'participants_app/register.html', context)
 
 
 class ConfirmEmailView(View):
