@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import FormView
+from django.views.generic import UpdateView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.mail import send_mail
 
@@ -54,7 +54,7 @@ class RegisterView(View):
             email = form.cleaned_data['email']
             event = form.cleaned_data['event']
             participant = Participant.objects.create(name=name, surname=surname, email=email, event=event)
-            confirmation_uuid = str(participant.confirmation_id)
+            confirmation_uuid = f'participant/{participant.confirmation_id}'
             url = urljoin(DOMAIN, confirmation_uuid)
             send_mail(
                 f'{name} - Confirm your email',
@@ -65,10 +65,8 @@ class RegisterView(View):
 
             return render(request, 'participants_app/form_submitted.html')
         else:
-            event = Event.objects.get(pk=kwargs['pk'])
-            register_form = RegisterForm(initial={'event': event})
             context = {
-                'form': register_form
+                'form': form
             }
             return render(request, 'participants_app/register.html', context)
 
@@ -82,3 +80,14 @@ class ConfirmEmailView(View):
         participant.confirmation_id = uuid.uuid1()
         participant.save()
         return render(request, 'participants_app/email_confirmed.html')
+
+
+class AcceptInvite(UpdateView):
+    template_name = 'participants_app/accepted_invite.html'
+    model = Participant
+
+    def get(self, request, *args, **kwargs):
+        accepted_id = kwargs['yes']
+        participant = Participant.objects.get(accepted_id=accepted_id)
+        participant.is_active = True
+        return super().get(request, *args, **kwargs)

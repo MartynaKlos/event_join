@@ -14,9 +14,13 @@ class Participant(models.Model):
     confirmation_id = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
     accepted_id = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
     declined_id = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
-    is_confirmed = models.BooleanField(default=False)
-    is_active = models.BooleanField(null=True)
+    is_confirmed = models.BooleanField(default=False, verbose_name='Email confirmed')
+    invitation_sent = models.BooleanField(default=False)
+    is_active = models.BooleanField(null=True, verbose_name='Invitation accepted')
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.name} {self.surname}'
 
     # def send_email(self):
     #     url = reverse('email-confirmed', kwargs={'confirmation_uuid': self.confirmation_id})

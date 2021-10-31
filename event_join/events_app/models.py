@@ -11,7 +11,7 @@ class Event(models.Model):
     registration_start = models.DateTimeField()
     registration_end = models.DateTimeField()
     date_created = models.DateTimeField(auto_now_add=True)
-    is_private = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False, verbose_name='Private')
 
     class Meta:
         ordering = ['start_date']
@@ -19,10 +19,13 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
+    @property
     def available(self):
         if self.registration_start <= timezone.now():
-            self.available = True
+            return True
         else:
-            self.available = False
-        return self.available
+            return False
 
+    @property
+    def count_places_left(self):
+        return self.limit - self.participant_set.filter(event=self.pk).count()

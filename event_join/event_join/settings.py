@@ -138,3 +138,4 @@ EMAIL_USE_TLS = False
 
 DOMAIN = 'https://127.0.0.1:8000/'
 
+SECURE_SSL_REDIRECT = False

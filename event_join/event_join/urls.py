@@ -28,4 +28,6 @@ urlpatterns = [
     path('events/register/<int:pk>/', part_views.RegisterView.as_view(), name='register'),
     path('participant/<confirmation_uuid>/', part_views.ConfirmEmailView.as_view(), name='email-confirmed'),
     path('login/', events_views.LoginView.as_view(), name='login'),
+    path('participant/<accepted_id>/', part_views.AcceptInvite.as_view(), name='accept-invite'),
+    path('logout/', events_views.LogoutView.as_view(), name='logout'),
 ]

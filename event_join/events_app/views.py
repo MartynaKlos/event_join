@@ -1,13 +1,11 @@
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
+from django.contrib.auth import login, logout
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import ListView, DetailView, FormView, RedirectView
 
 from .models import Event
 from .forms import AddEventForm, LoginForm
-from participants_app.models import Participant
 
 
 class Main(View):
@@ -22,8 +20,8 @@ class EventsListView(ListView):
 
     def get_queryset(self):
         queryset = Event.objects.filter(is_private=False)
-        for event in queryset:
-            event.available()
+        # for event in queryset:
+        #     event.available
         return queryset
 
 
@@ -36,8 +34,8 @@ class EventDetailsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         event_pk = context['object'].pk
-        context['places_left'] = Event.objects.get(pk=event_pk).limit - Participant.objects.filter(event=event_pk).count()
-        context['available'] = context['object'].available()
+        context['places_left'] = context['object'].count_places_left
+        context['available'] = context['object'].available
         return context
 
 
@@ -62,6 +60,12 @@ class LoginView(FormView):
         return response
 
 
+class LogoutView(RedirectView):
+    url = reverse_lazy('main')
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return super().get(request, *args, *kwargs)
 
 
 
