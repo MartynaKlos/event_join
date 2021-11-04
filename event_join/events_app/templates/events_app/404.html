@@ -7,12 +7,8 @@
           crossorigin="anonymous">
     <div class="container" align="center">
         <br><br>
-        {% if accepted == 'yes' %}
-        <h2>Thank you!</h2>
-        <p>You have been signed up for the event.</p>
-        {% else %}
-        <h2>Sorry to hear that.</h2>
-        <p>Look out for other invites in the future...</p>
-        {% endif %}
+        <img src="{% static '404-error.png' %}" alt="" width="30" height="24">
+        <br><br><br>
+        <p>Oops... Looks like you're trying to access a page that doesn't exist</p>
     </div>
 {% endblock %}

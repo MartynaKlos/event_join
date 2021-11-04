@@ -26,8 +26,10 @@ urlpatterns = [
     path('events/<int:event_id>/', events_views.EventDetailsView.as_view(), name='events-details'),
     path('events/add-event/', events_views.AddEventView.as_view(), name='add-event'),
     path('events/register/<int:pk>/', part_views.RegisterView.as_view(), name='register'),
-    path('participant/<confirmation_uuid>/', part_views.ConfirmEmailView.as_view(), name='email-confirmed'),
+    path('participant/email/<confirmation_uuid>/', part_views.ConfirmEmailView.as_view(), name='email-confirmed'),
     path('login/', events_views.LoginView.as_view(), name='login'),
-    path('participant/<accepted_id>/', part_views.AcceptInvite.as_view(), name='accept-invite'),
+    path('participant/invite/<answer_id>/', part_views.AnswerInvite.as_view(), name='accept-invite'),
     path('logout/', events_views.LogoutView.as_view(), name='logout'),
 ]
+
+handler404 = 'events_app.views.error_404_view'

@@ -20,18 +20,18 @@
         <tbody>
         {% for event in events %}
             <tr class="table-warning">
-                <th scope="row">{{ event.pk }}</th>
+                <th scope="row">{{ event.index }}</th>
                 <td>{{ event.title }}</td>
                 <td>{{ event.start_date }} - {{ event.end_date }}</td>
                 <td>
                     <form>
-                        <button formaction="/events/{{ event.pk }}/" type="submit" class="btn btn-success">Learn more</button>
+                        <button formaction="{% url 'events-details' event_id=event.pk %}" type="submit" class="btn btn-success">Learn more</button>
                     </form>
                 </td>
                 <td>
                     {% if event.available %}
                     <form>
-                        <button formaction="/events/register/{{ event.pk }}/" type="submit" class="btn btn-danger">Register</button>
+                        <button formaction="{% url 'register' pk=event.pk %}" type="submit" class="btn btn-danger">Register</button>
                     </form>
                     {% else %}
                     Coming soon...

@@ -1,4 +1,5 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -6,6 +7,10 @@ from django.views.generic import ListView, DetailView, FormView, RedirectView
 
 from .models import Event
 from .forms import AddEventForm, LoginForm
+
+
+def error_404_view(request, exception):
+    return render(request, 'events_app/404.html')
 
 
 class Main(View):
@@ -20,8 +25,10 @@ class EventsListView(ListView):
 
     def get_queryset(self):
         queryset = Event.objects.filter(is_private=False)
-        # for event in queryset:
-        #     event.available
+        index = 1
+        for event in queryset:
+            event.index = index
+            index += 1
         return queryset
 
 
@@ -39,10 +46,11 @@ class EventDetailsView(DetailView):
         return context
 
 
-class AddEventView(FormView):
+class AddEventView(PermissionRequiredMixin, FormView):
     form_class = AddEventForm
     template_name = 'events_app/add_event.html'
     success_url = reverse_lazy('events-list')
+    permission_required = 'events_app.add_event'
 
     def form_valid(self, form):
         form.save()

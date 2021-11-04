@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import UpdateView
+from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 from django.core.mail import send_mail
 
@@ -54,7 +54,7 @@ class RegisterView(View):
             email = form.cleaned_data['email']
             event = form.cleaned_data['event']
             participant = Participant.objects.create(name=name, surname=surname, email=email, event=event)
-            confirmation_uuid = f'participant/{participant.confirmation_id}'
+            confirmation_uuid = f'participant/email/{participant.confirmation_id}'
             url = urljoin(DOMAIN, confirmation_uuid)
             send_mail(
                 f'{name} - Confirm your email',
@@ -82,12 +82,22 @@ class ConfirmEmailView(View):
         return render(request, 'participants_app/email_confirmed.html')
 
 
-class AcceptInvite(UpdateView):
-    template_name = 'participants_app/accepted_invite.html'
-    model = Participant
-
+class AnswerInvite(View):
     def get(self, request, *args, **kwargs):
-        accepted_id = kwargs['yes']
-        participant = Participant.objects.get(accepted_id=accepted_id)
-        participant.is_active = True
-        return super().get(request, *args, **kwargs)
+        answer_id = kwargs['answer_id']
+        context = {}
+        if Participant.objects.filter(accepted_id=answer_id):
+            participant = Participant.objects.get(accepted_id=answer_id)
+            participant.is_active = True
+            participant.is_confirmed = True
+            participant.save()
+            context['accepted'] = 'yes'
+        else:
+            participant = Participant.objects.get(declined_id=answer_id)
+            participant.is_active = False
+            participant.is_confirmed = True
+            participant.save()
+            context['accepted'] = 'no'
+        return render(request, 'participants_app/accepted_invite.html', context)
+
+

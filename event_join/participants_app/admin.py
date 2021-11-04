@@ -23,10 +23,10 @@ def send_invitation(modeladmin, request, queryset):
             surname=obj.surname,
             email=obj.email,
             invitation_sent=True,
-            event_id=event_id
+            event_id=event_id,
         )
-        yes = urljoin(DOMAIN, f'participant/{participant.accepted_id}')
-        no = urljoin(DOMAIN, f'participant/{participant.declined_id}')
+        yes = urljoin(DOMAIN, f'participant/invite/{participant.accepted_id}')
+        no = urljoin(DOMAIN, f'participant/invite/{participant.declined_id}')
         send_mail(
             f"{participant.name} - you've been invited",
             f'accept - {yes}; decline - {no}',
