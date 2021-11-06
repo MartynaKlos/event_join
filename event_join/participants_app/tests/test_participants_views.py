@@ -1,0 +1,53 @@
+import pytest
+
+from events_app.models import Event
+from participants_app.models import Participant
+
+
+@pytest.mark.django_db
+def test_register(set_up, client):
+    event = Event.objects.all().order_by('?').first()
+    participants_count = Participant.objects.count()
+    url = f'/events/register/{event.pk}'
+    data = {
+        'name': 'Participant',
+        'surname': 'New',
+        'email': 'new_participant@gmail.com',
+        'event': event
+    }
+    response = client.post(url, data)
+    assert response.status_code == 302
+    assert Participant.objects.count() == participants_count + 1
+    for key, value in data.items():
+        assert response.data[key] == value
+
+
+@pytest.mark.django_db
+def test_email_confirmation(set_up, client):
+    participant = Participant.objects.all().order_by('?').first()
+    url = f'/participant/email/{participant.confirmation_id}'
+    response = client.get(url)
+    assert response.status_code == 200
+    assert participant.is_confirmed
+
+
+@pytest.mark.django_db
+def test_accept_invite(set_up, client):
+    participant = Participant.objects.all().order_by('?').first()
+    url = f'/participant/invite/{participant.accepted_id}/'
+    response = client.get(url)
+    assert response.status_code == 200
+    assert participant.is_active
+
+
+@pytest.mark.django_db
+def test_decline_invite(set_up, client):
+    participant = Participant.objects.all().order_by('?').first()
+    url = f'/participant/invite/{participant.declined_id}/'
+    response = client.get(url)
+    assert response.status_code == 200
+    assert not participant.is_active
+
+
+
+
