@@ -30,6 +30,7 @@ urlpatterns = [
     path('login/', events_views.LoginView.as_view(), name='login'),
     path('participant/invite/<answer_id>/', part_views.AnswerInvite.as_view(), name='accept-invite'),
     path('logout/', events_views.LogoutView.as_view(), name='logout'),
+    path('events/search/', events_views.SearchEventView.as_view(), name='search-view'),
 ]
 
 handler404 = 'events_app.views.error_404_view'

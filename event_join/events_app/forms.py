@@ -34,3 +34,9 @@ class LoginForm(forms.Form):
         self.user = authenticate(username=username, password=password)
         if self.user is None:
             raise ValidationError('Incorrect username or password!')
+
+
+class SearchForm(forms.Form):
+    title = forms.CharField(label='event', max_length=100, widget=forms.TextInput),
+    description = forms.CharField(label='description', widget=forms.Textarea),
+    start_date = forms.DateTimeField(label='Start date', widget=forms.DateTimeInput)

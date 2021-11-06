@@ -1,12 +1,15 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import ListView, DetailView, FormView, RedirectView
 
+from rest_framework import generics
+
+from .forms import AddEventForm, LoginForm, SearchForm
 from .models import Event
-from .forms import AddEventForm, LoginForm
+from .serializers import EventSerializer
 
 
 def error_404_view(request, exception):
@@ -32,6 +35,11 @@ class EventsListView(ListView):
         return queryset
 
 
+class EventsListApiView(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+
+
 class EventDetailsView(DetailView):
     model = Event
     context_object_name = 'event'
@@ -44,6 +52,11 @@ class EventDetailsView(DetailView):
         context['places_left'] = context['object'].count_places_left
         context['available'] = context['object'].available
         return context
+
+
+class EventDetailsApiView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
 
 
 class AddEventView(PermissionRequiredMixin, FormView):
@@ -76,4 +89,13 @@ class LogoutView(RedirectView):
         return super().get(request, *args, *kwargs)
 
 
+class SearchEventView(FormView):
+    template_name = 'events_app/search_event.html'
+    form_class = SearchForm
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form(form_class=SearchForm)
+        if form.is_valid():
+            pass
+        else:
+            pass
