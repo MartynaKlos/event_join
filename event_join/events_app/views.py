@@ -1,19 +1,29 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.http import HttpResponseNotFound, Http404
 from django.shortcuts import render
-from django.urls import reverse_lazy, reverse
+from django.template import context, Engine
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, FormView, RedirectView
 
-from rest_framework import generics
+from rest_framework import viewsets
 
 from .forms import AddEventForm, LoginForm, SearchForm
 from .models import Event
-from .serializers import EventSerializer
+from events_api.serializers import EventSerializer
 
 
 def error_404_view(request, exception):
-    return render(request, 'events_app/404.html')
+    template = Engine().from_string('events_app/errors/404.html')
+    body = template.render(context, request)
+    content_type = None
+    return HttpResponseNotFound(body, content_type=content_type)
+
+
+class EventsViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
 
 
 class Main(View):
@@ -35,11 +45,6 @@ class EventsListView(ListView):
         return queryset
 
 
-class EventsListApiView(generics.ListCreateAPIView):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
-
-
 class EventDetailsView(DetailView):
     model = Event
     context_object_name = 'event'
@@ -52,11 +57,6 @@ class EventDetailsView(DetailView):
         context['places_left'] = context['object'].count_places_left
         context['available'] = context['object'].available
         return context
-
-
-class EventDetailsApiView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
 
 
 class AddEventView(PermissionRequiredMixin, FormView):
@@ -99,3 +99,8 @@ class SearchEventView(FormView):
             pass
         else:
             pass
+
+
+class TestError(View):
+    def get(self, request):
+        raise Http404

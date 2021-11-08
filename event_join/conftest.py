@@ -21,7 +21,7 @@ def set_up():
             end_date=set_random_date(),
             limit=randint(10, 100),
             registration_start=set_random_date(),
-            registration_date=set_random_date(),
+            registration_end=set_random_date(),
             is_private=bool(random.getrandbits(1))
         )
     for i in range(10):

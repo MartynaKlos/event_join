@@ -14,10 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
 
 import events_app.views as events_views
 import participants_app.views as part_views
+
+
+router = DefaultRouter()
+router.register(r'events', events_views.EventsViewSet, basename='events')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +38,8 @@ urlpatterns = [
     path('participant/invite/<answer_id>/', part_views.AnswerInvite.as_view(), name='accept-invite'),
     path('logout/', events_views.LogoutView.as_view(), name='logout'),
     path('events/search/', events_views.SearchEventView.as_view(), name='search-view'),
+    path('error/', events_views.TestError.as_view()),
+    path('', include(router.urls)),
 ]
 
-handler404 = 'events_app.views.error_404_view'
+handler404 = events_views.error_404_view

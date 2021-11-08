@@ -11,8 +11,8 @@ from events_app.tests.utils import set_random_date
 def test_events_list_view(set_up, client):
     url = '/events/'
     response = client.get(url)
-    list_view = list(response.context['events'].values_list('pk', flat=True))
-    list_db = list(Event.objects.filter(is_private=False).values_list('pk', flat=True))
+    list_view = list(response.context['events'])
+    list_db = list(Event.objects.filter(is_private=False))
     assert response.status_code == 200
     assert list_db == list_view
 
@@ -22,12 +22,13 @@ def test_event_details_view(set_up, client):
     event = Event.objects.all().first()
     url = f'/events/{event.pk}/'
     response = client.get(url)
+    event_obj = response.context['object']
     assert response.status_code == 200
-    assert response.context['title'] == event.title
-    assert response.context['description'] == event.description
-    assert response.context['limit'] == event.limit
-    assert response.context['start_date'] == event.start_date
-    assert response.context['is_private'] == event.is_private
+    assert event_obj.title == event.title
+    assert event_obj.description == event.description
+    assert event_obj.limit == event.limit
+    assert response.context['places_left'] == event.count_places_left
+    assert response.context['available'] == event.available
 
 
 @pytest.mark.django_db
