@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 <br><br>
 {% block content %}
-<div class="container">
+<br><br>
+<div class="container" align="center">
 <form method="POST" action="">
     <div>
         {% csrf_token %}
@@ -9,5 +10,40 @@
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
+    <br><br>
+{% if events is not None %}
+    <div class="container">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous">
+    <h3>Events you might be looking for</h3>
+        <br><br>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Event</th>
+                <th scope="col">Date and time</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for event in events %}
+            <tr class="table-warning">
+                <th scope="row">{{ event.index }}</th>
+                <td>{{ event.title }}</td>
+                <td>{{ event.start_date }} - {{ event.end_date }}</td>
+                <td>
+                    <form>
+                        <button formaction="{% url 'events-details' event_id=event.pk %}" type="submit" class="btn btn-success">Learn more</button>
+                    </form>
+                </td>
+            </tr>
+{% endfor %}
+    </tbody>
+</table>
+</div>
+{% endif %}
 </div>
 {% endblock %}

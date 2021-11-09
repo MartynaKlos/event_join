@@ -1,9 +1,10 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseNotFound, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import context, Engine
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, DetailView, FormView, RedirectView
 
@@ -37,7 +38,7 @@ class EventsListView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        queryset = Event.objects.filter(is_private=False)
+        queryset = Event.objects.filter(is_private=False, start_date__gte=timezone.now())
         index = 1
         for event in queryset:
             event.index = index
@@ -92,13 +93,26 @@ class LogoutView(RedirectView):
 class SearchEventView(FormView):
     template_name = 'events_app/search_event.html'
     form_class = SearchForm
+    success_url = '/events/'
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form(form_class=SearchForm)
-        if form.is_valid():
-            pass
-        else:
-            pass
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        context = {
+            'form': form
+        }
+        events = Event.objects.all()
+        if cd['title']:
+            events = events.filter(title__icontains=cd['title'])
+        if cd['description']:
+            events = events.filter(description__icontains=cd['description'])
+        if cd['start_date']:
+            events = events.filter(start_date__gte=cd['start_date'])
+        index = 1
+        for event in events:
+            event.index = index
+            index += 1
+        context['events'] = events
+        return render(self.request, 'events_app/search_event.html', context)
 
 
 class TestError(View):

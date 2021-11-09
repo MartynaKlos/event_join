@@ -1,12 +1,13 @@
 from django import forms
 from django.contrib.auth import authenticate
-from django.contrib.admin import widgets
 from django.core.exceptions import ValidationError
-from django.forms import Textarea, DateTimeInput
+from django.forms import widgets, DateTimeInput, DateInput, ModelForm, CharField, DateTimeField
+
 from .models import Event
 
 
 class AddEventForm(forms.ModelForm):
+
     class Meta:
         model = Event
         fields = ['title',
@@ -17,6 +18,12 @@ class AddEventForm(forms.ModelForm):
                   'registration_start',
                   'registration_end',
                   'is_private']
+        widgets = {
+            'start_date': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'}),
+            'end_date': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'}),
+            'registration_start': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'}),
+            'registration_end': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'})
+        }
 
     # def __init__(self, *args, **kwargs):
     #     super(AddEventForm, self).__init__(self, *args, **kwargs)
@@ -37,6 +44,16 @@ class LoginForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    title = forms.CharField(label='event', max_length=100, widget=forms.TextInput),
-    description = forms.CharField(label='description', widget=forms.Textarea),
+    title = forms.CharField(label='event', max_length=100),
+    description = forms.CharField(label='description'),
     start_date = forms.DateTimeField(label='Start date', widget=forms.DateTimeInput)
+
+
+class SearchForm(forms.ModelForm):
+    title = CharField(required=False)
+    description = CharField(required=False)
+    start_date = DateTimeField(required=False)
+
+    class Meta:
+        model = Event
+        fields = ['title', 'description', 'start_date']
