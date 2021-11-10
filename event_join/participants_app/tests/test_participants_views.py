@@ -23,6 +23,7 @@ def test_register(set_up, client):
 @pytest.mark.django_db
 def test_email_confirmation(set_up, client):
     participant = Participant.objects.all().order_by('?').first()
+    breakpoint()
     url = f'/participant/email/{participant.confirmation_id}/'
     response = client.get(url)
     assert response.status_code == 200

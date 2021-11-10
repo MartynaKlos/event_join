@@ -43,12 +43,6 @@ class LoginForm(forms.Form):
             raise ValidationError('Incorrect username or password!')
 
 
-class SearchForm(forms.Form):
-    title = forms.CharField(label='event', max_length=100),
-    description = forms.CharField(label='description'),
-    start_date = forms.DateTimeField(label='Start date', widget=forms.DateTimeInput)
-
-
 class SearchForm(forms.ModelForm):
     title = CharField(required=False)
     description = CharField(required=False)
@@ -56,4 +50,19 @@ class SearchForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ['title', 'description', 'start_date']
+        fields = ['title',
+                  'description',
+                  'start_date']
+
+
+class UpdateEventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['title',
+                  'description',
+                  'start_date',
+                  'end_date',
+                  'registration_start',
+                  'registration_end',
+                  'limit',
+                  'is_private']

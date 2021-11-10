@@ -37,6 +37,13 @@
                     Coming soon...
                     {% endif %}
                 </td>
+                {% if user.is_authenticated %}
+                <td>
+                    <form>
+                        <button formaction="{% url 'update-event' event_pk=event.pk %}" type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>

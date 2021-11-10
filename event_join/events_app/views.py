@@ -2,21 +2,22 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.http import HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect
-from django.template import context, Engine
+from django.template import context, loader
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views import View
-from django.views.generic import ListView, DetailView, FormView, RedirectView
+from django.views.generic import ListView, DetailView, FormView, RedirectView, UpdateView
 
 from rest_framework import viewsets
 
-from .forms import AddEventForm, LoginForm, SearchForm
+from .forms import AddEventForm, LoginForm, SearchForm, UpdateEventForm
 from .models import Event
 from events_api.serializers import EventSerializer
 
 
 def error_404_view(request, exception):
-    template = Engine().from_string('events_app/errors/404.html')
+    context = {}
+    template = loader.get_template('events_app/errors/404.html')
     body = template.render(context, request)
     content_type = None
     return HttpResponseNotFound(body, content_type=content_type)
@@ -113,6 +114,32 @@ class SearchEventView(FormView):
             index += 1
         context['events'] = events
         return render(self.request, 'events_app/search_event.html', context)
+
+
+class UpdateEventView(PermissionRequiredMixin, UpdateView):
+    model = Event
+    form_class = UpdateEventForm
+    template_name = 'events_app/update_event.html'
+    pk_url_kwarg = 'event_pk'
+    success_url = reverse_lazy('events-list')
+    permission_required = 'events_app.update_event'
+
+    def get(self, request, *args, **kwargs):
+        event = Event.objects.get(pk=kwargs['event_pk'])
+        form = self.form_class(initial={
+            'title': event.title,
+            'description': event.description,
+            'start_date': event.start_date,
+            'end_date': event.end_date,
+            'registration_start': event.registration_start,
+            'registration_end': event.registration_end,
+            'limit': event.limit,
+            'is_private': event.is_private
+        })
+        context = {
+            'form': form
+        }
+        return render(request, self.template_name, context)
 
 
 class TestError(View):

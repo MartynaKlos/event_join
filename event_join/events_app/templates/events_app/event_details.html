@@ -19,10 +19,16 @@
         <br><br>
         {% if event.available %}
         <form>
-            <button formaction="/events/register/{{ event.pk }}/" type="submit" class="btn btn-danger">Register</button>
+            <button formaction="{% url 'register' pk=event.pk %}" type="submit" class="btn btn-danger">Register</button>
         </form>
         {% else %}
         Registration starts on {{ event.registration_start }}
+        {% endif %}
+        {% if user.is_authenticated %}
+        <br><br>
+        <form>
+            <button formaction="{% url 'update-event' event_pk=event.pk %}" type="submit" class="btn btn-primary">Update</button>
+        </form>
         {% endif %}
     </div>
 {% endblock %}

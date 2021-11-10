@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'events_app',
     'participants_app',
     'rest_framework',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
