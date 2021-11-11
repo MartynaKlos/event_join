@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms import widgets, DateTimeInput, DateInput, ModelForm, CharField, DateTimeField
 
@@ -66,3 +67,23 @@ class UpdateEventForm(forms.ModelForm):
                   'registration_end',
                   'limit',
                   'is_private']
+
+
+class AddUserForm(forms.Form):
+    username = forms.CharField(max_length=64)
+    email = forms.EmailField()
+    password1 = forms.CharField(min_length=10, widget=widgets.PasswordInput)
+    password2 = forms.CharField(min_length=10, widget=widgets.PasswordInput)
+
+    def clean_login(self):
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exists():
+            raise ValidationError('This username is already taken!')
+        return username
+
+    def clean(self):
+        cd = super().clean()
+        password1 = cd['password1']
+        password2 = cd['password2']
+        if password2 != password1:
+            raise ValidationError('Passwords are not identical!')

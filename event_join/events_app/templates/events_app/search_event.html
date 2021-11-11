@@ -11,7 +11,7 @@
     </div>
 </form>
     <br><br>
-{% if events is not None %}
+{% if events %}
     <div class="container">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
     rel="stylesheet"
@@ -44,6 +44,9 @@
     </tbody>
 </table>
 </div>
+{% endif %}
+{% if message %}
+<h3>{{ message }}</h3>
 {% endif %}
 </div>
 {% endblock %}

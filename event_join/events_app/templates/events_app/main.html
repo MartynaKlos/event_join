@@ -7,11 +7,15 @@
           crossorigin="anonymous">
     <div class="container" align="center">
         <br><br>
+        {% if user.is_authenticated %}
+        <h3>Welcome {{ user.username }}!</h3>
+        {% else %}
         <h3>Welcome to EventJoin!</h3>
         <br><br>
         <p>Here you can find and register for all kinds of fun events.</p>
         <p>If you don't know exactly what you're looking for, you can use our Search section.</p>
         <br><br>
         <p>Interested in posting events yourself? - register today!</p>
+        {% endif %}
     </div>
 {% endblock %}

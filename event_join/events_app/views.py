@@ -1,5 +1,6 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.models import User, Permission
 from django.http import HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect
 from django.template import context, loader
@@ -10,7 +11,7 @@ from django.views.generic import ListView, DetailView, FormView, RedirectView, U
 
 from rest_framework import viewsets
 
-from .forms import AddEventForm, LoginForm, SearchForm, UpdateEventForm
+from .forms import AddEventForm, LoginForm, SearchForm, UpdateEventForm, AddUserForm
 from .models import Event
 from events_api.serializers import EventSerializer
 
@@ -72,6 +73,24 @@ class AddEventView(PermissionRequiredMixin, FormView):
         return super().form_valid(form)
 
 
+class AddUserView(FormView):
+    template_name = 'events_app/add_user.html'
+    form_class = AddUserForm
+    success_url = reverse_lazy('main')
+
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        user = User.objects.create_user(
+            username=cd['username'],
+            password=cd['password1'],
+            email=cd['email']
+        )
+        permission_add = Permission.objects.get(codename='events_app.add_event')
+        permission_change = Permission.objects.get(codename='events_app.change_event')
+        user.user_permissions.add(permission_add, permission_change)
+        return super().form_valid(form)
+
+
 class LoginView(FormView):
     template_name = 'events_app/login.html'
     form_class = LoginForm
@@ -101,7 +120,7 @@ class SearchEventView(FormView):
         context = {
             'form': form
         }
-        events = Event.objects.all()
+        events = Event.objects.filter(is_private=False)
         if cd['title']:
             events = events.filter(title__icontains=cd['title'])
         if cd['description']:
@@ -113,6 +132,8 @@ class SearchEventView(FormView):
             event.index = index
             index += 1
         context['events'] = events
+        if events.count() == 0:
+            context['message'] = "No events matched your search..."
         return render(self.request, 'events_app/search_event.html', context)
 
 
@@ -122,7 +143,7 @@ class UpdateEventView(PermissionRequiredMixin, UpdateView):
     template_name = 'events_app/update_event.html'
     pk_url_kwarg = 'event_pk'
     success_url = reverse_lazy('events-list')
-    permission_required = 'events_app.update_event'
+    permission_required = 'events_app.change_event'
 
     def get(self, request, *args, **kwargs):
         event = Event.objects.get(pk=kwargs['event_pk'])
@@ -141,7 +162,3 @@ class UpdateEventView(PermissionRequiredMixin, UpdateView):
         }
         return render(request, self.template_name, context)
 
-
-class TestError(View):
-    def get(self, request):
-        raise Http404

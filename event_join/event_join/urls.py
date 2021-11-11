@@ -18,12 +18,14 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
+import events_api.views as api_views
 import events_app.views as events_views
 import participants_app.views as part_views
 
 
 router = DefaultRouter()
-router.register(r'events', events_views.EventsViewSet, basename='events')
+router.register(r'events', api_views.EventsViewSet, basename='events')
+router.register(r'participants', api_views.ParticipantsViewSet, basename='participants')
 
 
 urlpatterns = [
@@ -39,7 +41,10 @@ urlpatterns = [
     path('logout/', events_views.LogoutView.as_view(), name='logout'),
     path('events/search/', events_views.SearchEventView.as_view(), name='search-view'),
     path('events/update/<int:event_pk>/', events_views.UpdateEventView.as_view(), name='update-event'),
-    path('api/', include((router.urls, 'events_app'), namespace='api')),
+    path('api-events/', include((router.urls, 'events_app'), namespace='api-events')),
+    path('api-participants/', include((router.urls, 'participants_app'), namespace='api-participants')),
+    path('api-login/', include('rest_framework.urls')),
+    path('register/', events_views.AddUserView.as_view(), name='user-register')
 ]
 
 handler404 = events_views.error_404_view
