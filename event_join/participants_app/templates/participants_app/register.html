@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 <br><br>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -17,4 +18,10 @@
         </form>
     {% endif %}
     </div>
+    {% if message %}
+    <br><br>
+    <div class="container" align="center">
+    <h3>{{ message }}</h3>
+    </div>
+    {% endif %}
 {% endblock %}

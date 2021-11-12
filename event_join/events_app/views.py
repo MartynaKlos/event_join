@@ -1,10 +1,10 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User, Permission
-from django.http import HttpResponseNotFound, Http404
-from django.shortcuts import render, redirect
-from django.template import context, loader
-from django.urls import reverse_lazy, reverse
+from django.http import HttpResponseNotFound
+from django.shortcuts import render
+from django.template import loader
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, DetailView, FormView, RedirectView, UpdateView
@@ -85,8 +85,8 @@ class AddUserView(FormView):
             password=cd['password1'],
             email=cd['email']
         )
-        permission_add = Permission.objects.get(codename='events_app.add_event')
-        permission_change = Permission.objects.get(codename='events_app.change_event')
+        permission_add = Permission.objects.get(codename='add_event')
+        permission_change = Permission.objects.get(codename='change_event')
         user.user_permissions.add(permission_add, permission_change)
         return super().form_valid(form)
 

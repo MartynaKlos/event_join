@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms import widgets, DateTimeInput, DateInput, ModelForm, CharField, DateTimeField
+from django.forms import widgets, DateTimeInput, CharField, DateTimeField
 
 from .models import Event
 
@@ -25,10 +25,6 @@ class AddEventForm(forms.ModelForm):
             'registration_start': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'}),
             'registration_end': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'})
         }
-
-    # def __init__(self, *args, **kwargs):
-    #     super(AddEventForm, self).__init__(self, *args, **kwargs)
-    #     self.fields['start_date'].widget = widgets.AdminSplitDateTime()
 
 
 class LoginForm(forms.Form):

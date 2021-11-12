@@ -23,10 +23,10 @@ def test_register(set_up, client):
 @pytest.mark.django_db
 def test_email_confirmation(set_up, client):
     participant = Participant.objects.all().order_by('?').first()
-    breakpoint()
     url = f'/participant/email/{participant.confirmation_id}/'
     response = client.get(url)
     assert response.status_code == 200
+    participant.refresh_from_db()
     confirmed = participant.is_confirmed
     assert confirmed is True
 
@@ -37,6 +37,7 @@ def test_accept_invite(set_up, client):
     url = f'/participant/invite/{participant.accepted_id}/'
     response = client.get(url)
     assert response.status_code == 200
+    participant.refresh_from_db()
     assert participant.is_active is True
 
 
@@ -46,4 +47,5 @@ def test_decline_invite(set_up, client):
     url = f'/participant/invite/{participant.declined_id}/'
     response = client.get(url)
     assert response.status_code == 200
+    participant.refresh_from_db()
     assert participant.is_active is False

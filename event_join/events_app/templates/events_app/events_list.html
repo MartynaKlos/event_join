@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <br><br><br>
 <div class="container">
@@ -30,10 +30,12 @@
                     </form>
                 </td>
                 <td>
-                    {% if event.available %}
+                    {% if event.available and event.count_places_left > 0 %}
                     <form>
                         <button formaction="{% url 'register' pk=event.pk %}" type="submit" class="btn btn-danger">Register</button>
                     </form>
+                    {% elif event.available %}
+                    No places left
                     {% else %}
                     Coming soon...
                     {% endif %}

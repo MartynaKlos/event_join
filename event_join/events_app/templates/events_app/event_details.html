@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
     <br><br>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -15,12 +16,14 @@
         {{ event.start_date }} - {{ event.end_date }}
         <br><br>
         <h5>Places left:</h5>
-        {{ places_left }} / {{ event.limit }}
+        {{ places_left }} out of {{ event.limit }}
         <br><br>
-        {% if event.available %}
+        {% if event.available and event.count_places_left > 0 %}
         <form>
             <button formaction="{% url 'register' pk=event.pk %}" type="submit" class="btn btn-danger">Register</button>
         </form>
+        {% elif event.available %}
+        Event is full.
         {% else %}
         Registration starts on {{ event.registration_start }}
         {% endif %}
