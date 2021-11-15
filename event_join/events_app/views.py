@@ -2,7 +2,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User, Permission
 from django.http import HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -48,6 +48,20 @@ class EventsListView(ListView):
         return queryset
 
 
+class UserOnlyEventsListView(ListView):
+    context_object_name = 'events'
+    template_name = 'events_app/events_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = Event.objects.filter(is_private=False, start_date__gte=timezone.now(), user=self.request.user)
+        index = 1
+        for event in queryset:
+            event.index = index
+            index += 1
+        return queryset
+
+
 class EventDetailsView(DetailView):
     model = Event
     context_object_name = 'event'
@@ -69,14 +83,16 @@ class AddEventView(PermissionRequiredMixin, FormView):
     permission_required = 'events_app.add_event'
 
     def form_valid(self, form):
-        form.save()
+        event = form.save()
+        event.user = self.request.user
+        event.save()
         return super().form_valid(form)
 
 
 class AddUserView(FormView):
     template_name = 'events_app/add_user.html'
     form_class = AddUserForm
-    success_url = reverse_lazy('main')
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
         cd = form.cleaned_data
@@ -113,7 +129,7 @@ class LogoutView(RedirectView):
 class SearchEventView(FormView):
     template_name = 'events_app/search_event.html'
     form_class = SearchForm
-    success_url = '/events/'
+    success_url = reverse_lazy('events-list')
 
     def form_valid(self, form):
         cd = form.cleaned_data
@@ -146,7 +162,7 @@ class UpdateEventView(PermissionRequiredMixin, UpdateView):
     permission_required = 'events_app.change_event'
 
     def get(self, request, *args, **kwargs):
-        event = Event.objects.get(pk=kwargs['event_pk'])
+        event = get_object_or_404(Event, pk=kwargs['event_pk'], user=self.request.user)
         form = self.form_class(initial={
             'title': event.title,
             'description': event.description,

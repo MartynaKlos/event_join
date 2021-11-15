@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
@@ -12,6 +13,7 @@ class Event(models.Model):
     registration_end = models.DateTimeField()
     date_created = models.DateTimeField(auto_now_add=True)
     is_private = models.BooleanField(default=False, verbose_name='Private')
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['start_date']
@@ -29,3 +31,4 @@ class Event(models.Model):
     @property
     def count_places_left(self):
         return self.limit - self.participant_set.filter(event=self.pk).count()
+

@@ -42,9 +42,11 @@
                 </td>
                 {% if user.is_authenticated %}
                 <td>
+                {% if event.user == user %}
                     <form>
                         <button formaction="{% url 'update-event' event_pk=event.pk %}" type="submit" class="btn btn-primary">Update</button>
                     </form>
+                {% endif %}
                 </td>
                 {% endif %}
             </tr>
@@ -52,4 +54,11 @@
         </tbody>
     </table>
 </div>
+{% if user.is_authenticated %}
+<div class="container">
+<form>
+    <button type="submit" formaction="{% url 'events-list' %}" class="btn btn-secondary">All</button>  <button type="submit" formaction="{% url 'user-views' %}" class="btn btn-secondary">My events</button>
+</form>
+</div>
+{% endif %}
 {% endblock %}

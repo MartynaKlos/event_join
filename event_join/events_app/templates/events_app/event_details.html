@@ -27,7 +27,7 @@
         {% else %}
         Registration starts on {{ event.registration_start }}
         {% endif %}
-        {% if user.is_authenticated %}
+        {% if user.is_authenticated and event.user == user %}
         <br><br>
         <form>
             <button formaction="{% url 'update-event' event_pk=event.pk %}" type="submit" class="btn btn-primary">Update</button>

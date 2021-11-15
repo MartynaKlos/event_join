@@ -32,6 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', events_views.Main.as_view(), name='main'),
     path('events/', events_views.EventsListView.as_view(), name='events-list'),
+    path('events/my-events/', events_views.UserOnlyEventsListView.as_view(), name='user-views'),
     path('events/<int:event_id>/', events_views.EventDetailsView.as_view(), name='events-details'),
     path('events/add-event/', events_views.AddEventView.as_view(), name='add-event'),
     path('events/register/<int:pk>/', part_views.RegisterView.as_view(), name='register'),
@@ -41,10 +42,8 @@ urlpatterns = [
     path('logout/', events_views.LogoutView.as_view(), name='logout'),
     path('events/search/', events_views.SearchEventView.as_view(), name='search-view'),
     path('events/update/<int:event_pk>/', events_views.UpdateEventView.as_view(), name='update-event'),
-    path('api-events/', include((router.urls, 'events_app'), namespace='api-events')),
-    path('api-participants/', include((router.urls, 'participants_app'), namespace='api-participants')),
-    path('api-login/', include('rest_framework.urls')),
-    path('register/', events_views.AddUserView.as_view(), name='user-register')
+    path('api/', include((router.urls, 'events_app'), namespace='api-events')),
+    path('register/', events_views.AddUserView.as_view(), name='user-register'),
 ]
 
 handler404 = events_views.error_404_view
