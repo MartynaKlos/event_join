@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECRET_KEY kept in separate local_settings file
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # Application definition
@@ -139,3 +139,6 @@ EMAIL_USE_TLS = False
 DOMAIN = 'http://127.0.0.1:8000/'
 
 SECURE_SSL_REDIRECT = False
+
+MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

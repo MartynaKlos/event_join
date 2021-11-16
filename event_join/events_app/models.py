@@ -14,6 +14,7 @@ class Event(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     is_private = models.BooleanField(default=False, verbose_name='Private')
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    event_img = models.ImageField(upload_to='events/', verbose_name='Image', null=True)
 
     class Meta:
         ordering = ['start_date']

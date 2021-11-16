@@ -7,7 +7,7 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
 <div class="container">
-<form method="POST" action="">
+<form method="POST" action="" enctype="multipart/form-data">
     <div class="mb-3">
         {% csrf_token %}
         {{ form }}

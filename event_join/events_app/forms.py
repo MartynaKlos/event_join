@@ -18,7 +18,8 @@ class AddEventForm(forms.ModelForm):
                   'end_date',
                   'registration_start',
                   'registration_end',
-                  'is_private']
+                  'is_private',
+                  'event_img']
         widgets = {
             'start_date': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'}),
             'end_date': DateTimeInput(attrs={'placeholder': 'YYYY-MM-DD HH:MM'}),
