@@ -71,12 +71,16 @@ class AnswerInvite(View):
         answer_id = kwargs['answer_id']
         context = {}
         if Participant.objects.filter(accepted_id=answer_id):
-            participant = get_object_or_404(Participant, accepted_id=answer_id)
-            participant.is_active = True
-            participant.is_confirmed = True
-            participant.accepted_id = uuid.uuid1()
-            participant.save()
-            context['accepted'] = 'yes'
+            participant = Participant.objects.get(accepted_id=answer_id)
+            if Event.objects.get(pk=participant.event_id).count_places_left > 0:
+                participant = get_object_or_404(Participant, accepted_id=answer_id)
+                participant.is_active = True
+                participant.is_confirmed = True
+                participant.accepted_id = uuid.uuid1()
+                participant.save()
+                context['accepted'] = 'yes'
+            else:
+                context['accepted'] = 'full'
         else:
             participant = get_object_or_404(Participant, declined_id=answer_id)
             participant.is_active = False

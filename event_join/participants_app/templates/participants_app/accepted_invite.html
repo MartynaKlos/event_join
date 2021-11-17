@@ -11,9 +11,12 @@
         {% if accepted == 'yes' %}
         <h2>Thank you!</h2>
         <p>You have been signed up for the event.</p>
-        {% else %}
+        {% elif accepted == 'no' %}
         <h2>Sorry to hear that.</h2>
         <p>Look out for other invites in the future...</p>
+        {% elif accepted == 'full' %}
+        <h2>This event is now full.</h2>
+        <p>Better luck next time!</p>
         {% endif %}
     </div>
 {% endblock %}
