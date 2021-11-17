@@ -7,8 +7,10 @@
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
     crossorigin="anonymous">
     <div class="container">
-        <img src="{{ event.event_img.url }}">
-        <br><br>
+        {% if event.event_img %}
+            <img src="{{ event.event_img.url }}">
+            <br><br>
+        {% endif %}
         <h3>{{ event.title }}</h3>
         <br><br>
         <h5>What's it about:</h5>
@@ -21,19 +23,19 @@
         {{ places_left }} out of {{ event.limit }}
         <br><br>
         {% if event.available and event.count_places_left > 0 %}
-        <form>
-            <button formaction="{% url 'register' pk=event.pk %}" type="submit" class="btn btn-danger">Register</button>
-        </form>
+            <form>
+                <button formaction="{% url 'register' pk=event.pk %}" type="submit" class="btn btn-danger">Register</button>
+            </form>
         {% elif event.available %}
-        Event is full.
+            Event is full.
         {% else %}
-        Registration starts on {{ event.registration_start }}
+            Registration starts on {{ event.registration_start }}
         {% endif %}
         {% if user.is_authenticated and event.user == user %}
-        <br><br>
-        <form>
-            <button formaction="{% url 'update-event' event_pk=event.pk %}" type="submit" class="btn btn-primary">Update</button>
-        </form>
+            <br><br>
+            <form>
+                <button formaction="{% url 'update-event' event_pk=event.pk %}" type="submit" class="btn btn-primary">Update</button>
+            </form>
         {% endif %}
     </div>
 {% endblock %}

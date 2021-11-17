@@ -31,5 +31,8 @@ class Event(models.Model):
 
     @property
     def count_places_left(self):
-        return self.limit - self.participant_set.filter(event=self.pk).count()
+        if self.is_private:
+            return self.limit - self.participant_set.filter(event_id=self.pk, is_active=True)
+        else:
+            return self.limit - self.participant_set.filter(event_id=self.pk).count()
 
