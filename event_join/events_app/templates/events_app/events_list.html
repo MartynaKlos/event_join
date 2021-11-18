@@ -21,7 +21,7 @@
         <tbody>
         {% for event in events %}
             <tr class="table-warning">
-                <th scope="row">{{ event.index }}</th>
+                <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ event.title }}</td>
                 <td>{{ event.start_date }} - {{ event.end_date }}</td>
                 <td>

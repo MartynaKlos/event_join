@@ -41,10 +41,6 @@ class EventsListView(ListView):
 
     def get_queryset(self):
         queryset = Event.objects.filter(is_private=False, start_date__gte=timezone.now())
-        index = 1
-        for event in queryset:
-            event.index = index
-            index += 1
         return queryset
 
 
@@ -55,10 +51,6 @@ class UserOnlyEventsListView(ListView):
 
     def get_queryset(self):
         queryset = Event.objects.filter(is_private=False, start_date__gte=timezone.now(), user=self.request.user)
-        index = 1
-        for event in queryset:
-            event.index = index
-            index += 1
         return queryset
 
 
@@ -70,7 +62,6 @@ class EventDetailsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        event_pk = context['object'].pk
         context['places_left'] = context['object'].count_places_left
         context['available'] = context['object'].available
         return context
@@ -81,13 +72,6 @@ class AddEventView(PermissionRequiredMixin, FormView):
     template_name = 'events_app/add_event.html'
     success_url = reverse_lazy('events-list')
     permission_required = 'events_app.add_event'
-
-    # def post(self, request, *args, **kwargs):
-    #     form = self.get_form(request.POST, request.FILES)
-    #     if form.is_valid():
-    #         return self.form_valid(form)
-    #     else:
-    #         return self.form_invalid(form)
 
     def form_valid(self, form):
         event = form.save()
